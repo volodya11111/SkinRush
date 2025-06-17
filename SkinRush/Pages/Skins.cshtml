@@ -1,0 +1,142 @@
+﻿@page
+@model SkinRush.Pages.SkinsModel
+@{
+    ViewData["Title"] = "Скины SkinRush";
+}
+
+<style>
+    body {
+        background-color: #121212;
+        color: #ddd;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0px;
+    }
+
+    h1, h2 {
+        color: #eee;
+    }
+
+    button {
+        background-color: #333;
+        color: #eee;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 8px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+        button:hover {
+            background-color: #555;
+        }
+
+    .tab-content {
+        margin-top: 20px;
+    }
+
+    ul.skins-grid {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+        ul.skins-grid li {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 5px #000;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+            ul.skins-grid li:hover {
+                box-shadow: 0 0 15px #007acc;
+                transform: translateY(-5px);
+            }
+
+        ul.skins-grid img {
+            max-width: 100%;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        ul.skins-grid strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        ul.skins-grid p {
+            margin: 4px 0;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+</style>
+
+<h1>Скины SkinRush</h1>
+
+<div>
+    <button type="button" onclick="showTab('csgo')">CS:GO</button>
+    <button type="button" onclick="showTab('dota')">Dota 2</button>
+</div>
+
+<div id="csgo" class="tab-content">
+    <h2>CS:GO Скины</h2>
+    @if (Model.CSGOSkins.Any())
+    {
+        <ul class="skins-grid">
+            @foreach (var skin in Model.CSGOSkins)
+            {
+                <li>
+                    <a asp-page="/SkinDetails" asp-route-id="@skin.Id" asp-route-type="csgo">
+                        <img src="@skin.ImageUrl" alt="@skin.Name" />
+                        <strong>@skin.Name</strong>
+                        <p>Цена: @skin.Price $</p>
+                        <p>Тип: @skin.Type</p>
+                        <p>Качество: @skin.Exterior</p>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Скины CS:GO не найдены.</p>
+    }
+</div>
+
+<div id="dota" class="tab-content" style="display:none;">
+    <h2>Dota 2 Скины</h2>
+    @if (Model.DotaSkins.Any())
+    {
+        <ul class="skins-grid">
+            @foreach (var skin in Model.DotaSkins)
+            {
+                <li>
+                    <a asp-page="/SkinDetails" asp-route-id="@skin.Id" asp-route-type="dota">
+                        <img src="@skin.ImageUrl" alt="@skin.Name" />
+                        <strong>@skin.Name</strong>
+                        <p>Цена: @skin.Price $</p>
+                        <p>Герой: @skin.Hero</p>
+                        <p>Тип: @skin.Type</p>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Скины Dota 2 не найдены.</p>
+    }
+</div>
+
+<script>
+    function showTab(tabName) {
+        document.getElementById('csgo').style.display = (tabName === 'csgo') ? 'block' : 'none';
+        document.getElementById('dota').style.display = (tabName === 'dota') ? 'block' : 'none';
+    }
+</script>

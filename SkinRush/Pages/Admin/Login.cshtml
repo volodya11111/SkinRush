@@ -1,0 +1,70 @@
+﻿@page
+@model SkinRush.Pages.Admin.LoginModel
+@{
+    ViewData["Title"] = "Вход в админку";
+    Layout = "_Layout";
+}
+
+<style>
+    .login-form {
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 30px;
+        background: #1e1e1e;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0,172,238,0.5);
+        color: #eee;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 12px 0;
+        border: none;
+        border-radius: 8px;
+        background: #333;
+        color: #eee;
+        font-size: 1rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background-color: #00acee;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        button:hover {
+            background-color: #0086c1;
+        }
+
+    .error-message {
+        color: #dc3545;
+        font-weight: 700;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="login-form">
+    <h2>Вход в админку</h2>
+
+    <form method="post">
+        <input type="text" asp-for="Username" placeholder="Имя пользователя" required />
+        <input type="password" asp-for="Password" placeholder="Пароль" required />
+
+        <button type="submit">Войти</button>
+
+        @if (Model.ErrorMessage != null)
+        {
+            <p class="error-message">@Model.ErrorMessage</p>
+        }
+    </form>
+</div>

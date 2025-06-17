@@ -1,0 +1,125 @@
+﻿@page
+@using SkinRush.Models
+@model SkinRush.Pages.Skins.AddModel
+@{
+    ViewData["Title"] = "Добавить скин по ссылке";
+}
+
+<h2 class="mb-4 text-light">Добавить скин</h2>
+
+<form method="post" asp-page-handler="Parse" class="mb-4">
+    <div class="form-group">
+        <label for="urlInput" class="form-label text-light fw-semibold">Ссылка на предмет с торговой площадки Steam:</label>
+        <input type="url" id="urlInput" class="form-control form-control-lg" asp-for="MarketUrl" placeholder="https://steamcommunity.com/market/listings/..." required />
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">Загрузить</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+else if (Model.ParsedSkin != null)
+{
+    <h4 class="text-light mb-3">Результат</h4>
+
+    <form method="post" asp-page-handler="Save" style="max-width: 540px;">
+        <input type="hidden" asp-for="MarketUrl" />
+
+        <div class="card bg-dark text-light shadow-sm">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-4 text-center p-3">
+                    <img src="@Model.ParsedSkin.ImageUrl" alt="Skin" class="img-fluid rounded" style="max-height: 140px;" />
+                </div>
+                <div class="col-md-8 p-3">
+                    <h5 class="card-title fw-bold">@Model.ParsedSkin.Name</h5>
+
+                    <div class="mb-3">
+                        <label for="priceInput" class="form-label fw-semibold">Цена ($):</label>
+                        <input type="number" step="0.01" id="priceInput" class="form-control" asp-for="EditablePrice" />
+                    </div>
+
+                    <p><strong>Игра:</strong> @Model.ParsedSkin.Game</p>
+
+                    @{
+                        var cs = Model.ParsedSkin as Models.CSGOSkin;
+                        var ds = Model.ParsedSkin as Models.DotaSkin;
+                    }
+
+                    @if (cs != null)
+                    {
+                        <p><strong>Тип:</strong> @cs.Type</p>
+                        <p><strong>Износ:</strong> @cs.Exterior</p>
+                    }
+                    else if (ds != null)
+                    {
+                        <p><strong>Герой:</strong> @ds.Hero</p>
+                        <p><strong>Тип:</strong> @ds.Type</p>
+                    }
+
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
+                        <a class="btn btn-outline-success flex-grow-1" href="@Model.ParsedSkin.ItemUrl" target="_blank" rel="noopener noreferrer">Открыть в Steam</a>
+                        <button type="submit" class="btn btn-primary flex-grow-1">Сохранить скин</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+<style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    label.form-label {
+        color: #bbbbbb;
+    }
+
+    .card.bg-dark {
+        background-color: #2a2a2a !important;
+        border-radius: 0.5rem;
+    }
+
+    .btn-primary {
+        background-color: #3a3a3a;
+        border-color: #3a3a3a;
+        color: #e0e0e0;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #5c5c5c;
+            border-color: #5c5c5c;
+            box-shadow: 0 0 8px #5c5c5c;
+            color: #ffffff;
+        }
+
+    .btn-outline-success {
+        color: #a0a0a0;
+        border-color: #a0a0a0;
+        background-color: transparent;
+        transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .btn-outline-success:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 8px #ffffff;
+            background-color: transparent;
+        }
+
+    .btn-primary:focus,
+    .btn-primary:active,
+    .btn-primary.active,
+    .btn-primary:focus-visible {
+        background-color: #3a3a3a !important; /* твой основной цвет */
+        border-color: #3a3a3a !important;
+        box-shadow: none !important; /* убирает синий контур */
+        color: #e0e0e0 !important;
+        outline: none !important;
+    }
+</style>

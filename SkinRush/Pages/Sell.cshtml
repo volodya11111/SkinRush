@@ -1,0 +1,49 @@
+﻿@page
+@model SkinRush.Pages.SellModel
+@{
+    ViewData["Title"] = "Продажа предметов";
+    Layout = "_Layout";
+}
+
+<style>
+    .sell-container {
+        max-width: 800px;
+        margin: 60px auto;
+        background-color: #1c1c1c;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 172, 238, 0.2);
+        text-align: center;
+        color: #eee;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .sell-container h1 {
+        font-size: 2.8rem;
+        color: #00acee;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px #00acee;
+    }
+
+    .sell-container p {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+    }
+
+    .sell-container a img {
+        width: 180px;
+        transition: transform 0.3s ease;
+    }
+
+    .sell-container a img:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="sell-container">
+    <h1>Хотите продать скин?</h1>
+    <p>Если вы желаете продать мне свои игровые предметы (CS:GO или Dota 2), напишите мне в Telegram:</p>
+    <a href="https://t.me/agiqxc" target="_blank" rel="noopener noreferrer">
+        <img src="~/images/tguz.png" alt="Telegram" width="300" />
+    </a>
+</div>
