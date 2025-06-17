@@ -4,7 +4,7 @@ using SkinRush.Models;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SkinRush.Pages.Skins
+namespace SkinRush.Pages.Admin
 {
     public class AddModel : PageModel
     {
@@ -14,6 +14,17 @@ namespace SkinRush.Pages.Skins
         {
             _context = context;
         }
+        [BindProperty] public string ManualGame { get; set; }
+        [BindProperty] public string ManualName { get; set; }
+        [BindProperty] public decimal ManualPrice { get; set; }
+        [BindProperty] public string ManualImageUrl { get; set; }
+        [BindProperty] public string ManualItemUrl { get; set; }
+
+        [BindProperty] public string ManualCsgoType { get; set; }
+        [BindProperty] public string ManualCsgoExterior { get; set; }
+
+        [BindProperty] public string ManualDotaHero { get; set; }
+        [BindProperty] public string ManualDotaType { get; set; }
 
         [BindProperty]
         public string MarketUrl { get; set; }
@@ -25,8 +36,23 @@ namespace SkinRush.Pages.Skins
 
         public string ErrorMessage { get; set; }
 
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+            if (isAdmin != "true")
+            {
+                return RedirectToPage("/Admin/Login");
+            }
+            return Page();
+        }
         public async Task<IActionResult> OnPostParseAsync()
         {
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+            if (isAdmin != "true")
+            {
+                return RedirectToPage("/Admin/Login");
+            }
+
             if (string.IsNullOrWhiteSpace(MarketUrl))
             {
                 ErrorMessage = "Введите ссылку на предмет.";
@@ -54,7 +80,7 @@ namespace SkinRush.Pages.Skins
                 TempData.Keep("ParsedSkin");
                 TempData.Keep("SkinType");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка: {ex.Message}";
             }
@@ -62,8 +88,71 @@ namespace SkinRush.Pages.Skins
             return Page();
         }
 
+        public async Task<IActionResult> OnPostManualAddAsync()
+        {
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+            if (isAdmin != "true")
+            {
+                return RedirectToPage("/Admin/Login");
+            }
+            try
+            {
+                if (string.IsNullOrWhiteSpace(ManualGame) || string.IsNullOrWhiteSpace(ManualName) || ManualPrice <= 0 || string.IsNullOrWhiteSpace(ManualImageUrl))
+                {
+                    ErrorMessage = "Пожалуйста, заполните все обязательные поля.";
+                    return Page();
+                }
+
+                if (ManualGame == "CSGO")
+                {
+                    var skin = new CSGOSkin
+                    {
+                        Name = ManualName,
+                        Price = ManualPrice,
+                        ImageUrl = ManualImageUrl,
+                        ItemUrl = ManualItemUrl,
+                        Game = "CS:GO",
+                        Type = ManualCsgoType,
+                        Exterior = ManualCsgoExterior
+                    };
+                    _context.CSGOSkins.Add(skin);
+                }
+                else if (ManualGame == "Dota")
+                {
+                    var skin = new DotaSkin
+                    {
+                        Name = ManualName,
+                        Price = ManualPrice,
+                        ImageUrl = ManualImageUrl,
+                        ItemUrl = ManualItemUrl,
+                        Game = "Dota 2",
+                        Hero = ManualDotaHero,
+                        Type = ManualDotaType
+                    };
+                    _context.DotaSkins.Add(skin);
+                }
+                else
+                {
+                    ErrorMessage = "Неизвестная игра.";
+                    return Page();
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToPage();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Ошибка при добавлении вручную: {ex.Message}";
+                return Page();
+            }
+        }
         public async Task<IActionResult> OnPostSaveAsync()
         {
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+            if (isAdmin != "true")
+            {
+                return RedirectToPage("/Admin/Login");
+            }
             try
             {
                 if (!TempData.ContainsKey("ParsedSkin") || !TempData.ContainsKey("SkinType"))
@@ -116,7 +205,7 @@ namespace SkinRush.Pages.Skins
 
                 return RedirectToPage(); // Очистить форму и обновить страницу
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка при сохранении: {ex.Message}";
                 return Page();
