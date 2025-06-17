@@ -15,12 +15,12 @@ public class SteamSkinService
     public async Task<SkinBase> GetSkinFromMarketUrlAsync(string url)
     {
         var options = new ChromeOptions();
-        options.AddArgument("--headless"); // Без интерфейса
+        options.AddArgument("--headless"); 
 
         using var driver = new ChromeDriver(options);
         driver.Navigate().GoToUrl(url);
 
-        Thread.Sleep(1000); // Подождать загрузку и выполнение JS
+        Thread.Sleep(1000); 
 
         var htmlSelenium = driver.PageSource;
         
@@ -28,10 +28,8 @@ public class SteamSkinService
         doc.LoadHtml(htmlSelenium);
 
 
-        // 1. Получаем HTML страницы Steam Market по ссылке
         string html = await _http.GetStringAsync(url);
 
-        // 2. Извлекаем appid и market_hash_name из URL
         var m = Regex.Match(url, @"market/listings/(\d+)/(.+)$");
         if (!m.Success)
             throw new Exception("Не удалось извлечь appid и market_hash_name из URL");
@@ -40,7 +38,6 @@ public class SteamSkinService
         string marketHashNameEncoded = m.Groups[2].Value;
         string marketHashName = Uri.UnescapeDataString(marketHashNameEncoded);
 
-        // 3. Извлекаем JSON с данными о предметах из HTML — Steam кладет их в переменную JS g_rgAssets
         var assetsMatch = Regex.Match(html, @"var g_rgAssets = (.+?);\n", RegexOptions.Singleline);
         if (!assetsMatch.Success)
             throw new Exception("Не найден JSON g_rgAssets в HTML");
@@ -60,7 +57,6 @@ public class SteamSkinService
 
         SkinBase skin = null;
 
-        // 4. Перебираем контексты и предметы — ищем нужный предмет
         foreach (var context in appAssets.Properties())
         {
             var contextItems = context.Value as JObject;
@@ -100,10 +96,8 @@ public class SteamSkinService
                             Exterior = "",
                         };
 
-                        // Тип предмета (например: "Пистолет, StatTrak™, Армейское качество")
                         csSkin.Type = node.SelectSingleNode(".//div[@id='largeiteminfo_item_type']")?.InnerText.Trim();
 
-                        // Износ — ищем по ключевому слову "Износ:"
                         var descriptors = node.SelectNodes(".//div[@id='largeiteminfo_item_descriptors']//div[@class='descriptor']");
                         if (descriptors != null)
                         {
@@ -113,7 +107,7 @@ public class SteamSkinService
 
                                 if (text.StartsWith("Износ:"))
                                 {
-                                    csSkin.Exterior = text.Replace("Износ:", "").Trim(); // Например: "После полевых испытаний"
+                                    csSkin.Exterior = text.Replace("Износ:", "").Trim(); 
                                 }
                             }
                         }
@@ -145,7 +139,6 @@ public class SteamSkinService
                     }
                     else
                     {
-                        // Если игра неизвестна, возвращаем базовый скин с минимумом данных
                         skin = new GenericSkin
                         {
                             Name = name,
@@ -167,7 +160,6 @@ public class SteamSkinService
         if (skin == null)
             throw new Exception("Предмет не найден в JSON данных Steam");
 
-        // 5. Получаем цену через Steam Market priceoverview API
         string priceUrl = $"https://steamcommunity.com/market/priceoverview/?currency=1&appid={appid}&market_hash_name={Uri.EscapeDataString(marketHashName)}";
         string priceJson = await _http.GetStringAsync(priceUrl);
         var priceData = JObject.Parse(priceJson);

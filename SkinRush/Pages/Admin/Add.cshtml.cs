@@ -199,11 +199,11 @@ namespace SkinRush.Pages.Admin
 
                 await _context.SaveChangesAsync();
 
-                // ѕосле сохранени€ удал€ем TempData, чтобы не показывалс€ последний скин
+
                 TempData.Remove("ParsedSkin");
                 TempData.Remove("SkinType");
 
-                return RedirectToPage(); // ќчистить форму и обновить страницу
+                return RedirectToPage(); 
             }
             catch (Exception ex)
             {

@@ -79,6 +79,11 @@
 
 <h1>Скины SkinRush</h1>
 
+<form method="get">
+    <input type="text" name="search" value="@Request.Query["search"]" placeholder="Поиск по названию..." />
+    <button type="submit">Найти</button>
+</form>
+
 <div>
     <button type="button" onclick="showTab('csgo')">CS:GO</button>
     <button type="button" onclick="showTab('dota')">Dota 2</button>

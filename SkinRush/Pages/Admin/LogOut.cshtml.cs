@@ -7,8 +7,8 @@ namespace SkinRush.Pages.Admin
     {
         public IActionResult OnGet()
         {
-            HttpContext.Session.Remove("IsAdmin"); // Удаляем признак авторизации
-            return RedirectToPage("/Admin/Login"); // Перенаправляем на вход
+            HttpContext.Session.Remove("IsAdmin"); 
+            return RedirectToPage("/Admin/Login"); 
         }
     }
 }

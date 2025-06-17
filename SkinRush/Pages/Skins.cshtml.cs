@@ -18,10 +18,23 @@ namespace SkinRush.Pages
         public List<CSGOSkin> CSGOSkins { get; set; } = new();
         public List<DotaSkin> DotaSkins { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(string search)
         {
-            CSGOSkins = await _context.CSGOSkins.ToListAsync();
-            DotaSkins = await _context.DotaSkins.ToListAsync();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                CSGOSkins = await _context.CSGOSkins
+                    .Where(s => EF.Functions.Like(s.Name, $"%{search}%"))
+                    .ToListAsync();
+
+                DotaSkins = await _context.DotaSkins
+                    .Where(s => EF.Functions.Like(s.Name, $"%{search}%"))
+                    .ToListAsync();
+            }
+            else
+            {
+                CSGOSkins = await _context.CSGOSkins.ToListAsync();
+                DotaSkins = await _context.DotaSkins.ToListAsync();
+            }
         }
     }
 }

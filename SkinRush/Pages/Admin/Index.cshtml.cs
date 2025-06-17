@@ -21,7 +21,6 @@ namespace SkinRush.Pages.Admin
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Проверка авторизации через сессию
             var isAdmin = HttpContext.Session.GetString("IsAdmin");
             if (isAdmin != "true")
             {

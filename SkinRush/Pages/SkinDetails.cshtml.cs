@@ -18,7 +18,7 @@ namespace SkinRush.Pages
         public int Id { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string Type { get; set; } // "csgo" или "dota"
+        public string Type { get; set; } 
 
         public CSGOSkin CSGOSkin { get; set; }
         public DotaSkin DotaSkin { get; set; }
